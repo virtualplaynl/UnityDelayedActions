@@ -1,0 +1,11 @@
+{
+  "name": "games.virtualplay.delayedactions",
+  "version": "1.0.0",
+  "displayName": "Delayed Actions",
+  "description": "Simplified and debuggable alternative to Invoke, InvokeRepeating and Coroutines",
+  "unity": "2019.3",
+  "author": {
+    "name": "Virtual Play",
+    "url": "https://virtualplay.games/"
+  } 
+}
