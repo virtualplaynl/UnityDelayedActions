@@ -1,3 +1,5 @@
+MIT Licence
+
 DelayedActions script - simplified and debuggable alternative to Invoke,
 InvokeRepeating and Coroutines.
 
