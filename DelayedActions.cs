@@ -68,6 +68,8 @@ namespace VirtualPlay.DelayedActions
     {
         static DelayedActions instance;
 
+        public static bool DestroyOnLoad = false;
+
         List<DelayedAction> actions;
         List<Action> nextUpdateActions;
         List<Action> nextFixedUpdateActions;
@@ -93,7 +95,7 @@ namespace VirtualPlay.DelayedActions
         static void Init()
         {
             if (instance == null && !quitting) instance = new GameObject("Delayed Actions Scheduler", typeof(DelayedActions)).GetComponent<DelayedActions>();
-            DontDestroyOnLoad(instance.gameObject);
+            if(!DestroyOnLoad) DontDestroyOnLoad(instance.gameObject);
         }
 
         /// <summary>
@@ -122,7 +124,10 @@ namespace VirtualPlay.DelayedActions
         {
             Init();
 
-            instance.nextUpdateActions.Add(action);
+            lock(instance.nextUpdateActions)
+            {
+                instance.nextUpdateActions.Add(action);
+            }
         }
 
         /// <summary>
@@ -133,7 +138,10 @@ namespace VirtualPlay.DelayedActions
         {
             Init();
 
-            instance.nextFixedUpdateActions.Add(action);
+            lock(instance.nextFixedUpdateActions)
+            {
+                instance.nextFixedUpdateActions.Add(action);
+            }
         }
 
         /// <summary>
@@ -193,20 +201,23 @@ namespace VirtualPlay.DelayedActions
         int fixedCounter;
         void FixedUpdate()
         {
-            for (fixedCounter = 0; fixedCounter < nextFixedUpdateActions.Count; fixedCounter++)
+            lock(nextFixedUpdateActions)
             {
-                try
+                for (fixedCounter = 0; fixedCounter < nextFixedUpdateActions.Count; fixedCounter++)
                 {
-                    nextFixedUpdateActions[fixedCounter].Invoke();
-                }
-                catch (Exception e)
-                {
+                    try
+                    {
+                        nextFixedUpdateActions[fixedCounter].Invoke();
+                    }
+                    catch (Exception e)
+                    {
 #if UNITY_EDITOR
-                    Debug.LogWarning($"DelayedAction caught an Exception: {e}", this);
+                        Debug.LogWarning($"DelayedAction caught an Exception: {e}", this);
 #endif
+                    }
                 }
+                nextFixedUpdateActions.Clear();
             }
-            nextFixedUpdateActions.Clear();
         }
 
         int actionCounter;
@@ -238,20 +249,23 @@ namespace VirtualPlay.DelayedActions
                 }
             }
 
-            for (actionCounter = 0; actionCounter < nextUpdateActions.Count; actionCounter++)
+            lock(nextUpdateActions)
             {
-                try
+                for (actionCounter = 0; actionCounter < nextUpdateActions.Count; actionCounter++)
                 {
-                    nextUpdateActions[actionCounter].Invoke();
-                }
-                catch (Exception e)
-                {
+                    try
+                    {
+                        nextUpdateActions[actionCounter].Invoke();
+                    }
+                    catch (Exception e)
+                    {
 #if UNITY_EDITOR
-                    Debug.LogWarning($"DelayedAction caught an Exception: {e}", this);
+                        Debug.LogWarning($"DelayedAction caught an Exception: {e}", this);
 #endif
+                    }
                 }
+                nextUpdateActions.Clear();
             }
-            nextUpdateActions.Clear();
         }
     }
 }
