@@ -153,7 +153,7 @@ namespace VirtualPlay.DelayedActions
         {
             Init();
 
-            if (actionToStop.Stopped) return false;
+            if (actionToStop == null || actionToStop.Stopped) return false;
             if (instance.actions.Remove(actionToStop))
             {
                 actionToStop.Stopped = true;
@@ -171,7 +171,7 @@ namespace VirtualPlay.DelayedActions
         {
             Init();
 
-            if (!actionToRestart.Stopped) return false;
+            if (actionToStop == null || !actionToRestart.Stopped) return false;
 
             actionToRestart.Reset();
             instance.actions.Add(actionToRestart);
