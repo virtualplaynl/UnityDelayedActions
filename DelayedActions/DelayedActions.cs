@@ -171,7 +171,7 @@ namespace VirtualPlay.DelayedActions
         {
             Init();
 
-            if (actionToStop == null || !actionToRestart.Stopped) return false;
+            if (actionToRestart == null || !actionToRestart.Stopped) return false;
 
             actionToRestart.Reset();
             instance.actions.Add(actionToRestart);
