@@ -94,8 +94,11 @@ namespace VirtualPlay.DelayedActions
 
         static void Init()
         {
-            if (instance == null && !quitting) instance = new GameObject("Delayed Actions Scheduler", typeof(DelayedActions)).GetComponent<DelayedActions>();
-            if(!DestroyOnLoad) DontDestroyOnLoad(instance.gameObject);
+            if (instance == null && !quitting)
+            {
+                instance = new GameObject("Delayed Actions Scheduler", typeof(DelayedActions)).GetComponent<DelayedActions>();
+                if (!DestroyOnLoad) DontDestroyOnLoad(instance.gameObject);
+            }
         }
 
         /// <summary>
@@ -138,7 +141,7 @@ namespace VirtualPlay.DelayedActions
         {
             Init();
 
-            lock(instance.nextFixedUpdateActions)
+            lock (instance.nextFixedUpdateActions)
             {
                 instance.nextFixedUpdateActions.Add(action);
             }
